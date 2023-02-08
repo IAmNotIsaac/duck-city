@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://cooifomraerwi"]
+
+[ext_resource type="Texture2D" uid="uid://bwk7s3r3qtu4l" path="res://icon.svg" id="1_cspyi"]
+[ext_resource type="PackedScene" uid="uid://mmyakbw5c0rr" path="res://player.tscn" id="2_mvgg3"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_mqbsq"]
+texture = ExtResource("1_cspyi")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-64, -64, 64, -64, 64, 64, -64, 64)
+
+[sub_resource type="TileSet" id="TileSet_mx1al"]
+tile_size = Vector2i(128, 128)
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_mqbsq")
+
+[node name="World" type="Node2D"]
+
+[node name="TileMap" type="TileMap" parent="."]
+scale = Vector2(0.1, 0.1)
+tile_set = SubResource("TileSet_mx1al")
+format = 2
+layer_0/tile_data = PackedInt32Array(0, 0, 0, 1, 0, 0, 65537, 0, 0, 65536, 0, 0, 131071, 0, 0, 65535, 0, 0, 65534, 0, 0, 65533, 0, 0, 131070, 0, 0, 131069, 0, 0, 2, 0, 0, 65538, 0, 0)
+
+[node name="CharacterBody2d" parent="." instance=ExtResource("2_mvgg3")]
+position = Vector2(0, -8)
+
+[node name="Camera2d" type="Camera2D" parent="."]
+current = true
+zoom = Vector2(10, 10)

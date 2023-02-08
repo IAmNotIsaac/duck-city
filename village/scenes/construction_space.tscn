@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://cix0ycacen228"]
+
+[ext_resource type="Script" path="res://scenes/construction_space.gd" id="1_w1v3x"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_oou7f"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e1l15"]
+
+[node name="ConstructionSpace" type="Node3D"]
+script = ExtResource("1_w1v3x")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_oou7f")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_e1l15")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]
