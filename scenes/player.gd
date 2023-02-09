@@ -144,7 +144,7 @@ func _sp_GROUND(delta : float) -> void:
 	_ground_movement(delta)
 	
 	if Input.is_action_just_pressed("jump"):
-		if _n_climb_check.is_colliding() and not _n_climb_space_check.has_overlapping_bodies():
+		if _n_climb_check.is_colliding():
 			_state.switch(States.CLIMB)
 			return
 	
@@ -178,8 +178,7 @@ func _sp_AIR(delta : float) -> void:
 	_air_movement(delta)
 	
 	if Input.is_action_just_pressed("jump"):
-		print("%s %s" % [_n_climb_check.is_colliding(), _n_climb_space_check.has_overlapping_bodies()])
-		if _n_climb_check.is_colliding() and not _n_climb_space_check.has_overlapping_bodies():
+		if _n_climb_check.is_colliding():
 			_state.switch(States.CLIMB)
 			return
 	
@@ -274,11 +273,20 @@ func _sl_JUMP() -> void:
 
 
 func _sl_CLIMB() -> void:
-	if not _n_climb_check.is_colliding() or _n_climb_space_check.has_overlapping_bodies():
+	if not _n_climb_check.is_colliding():
 		_state.switch(States.DEFAULT)
 		return
 	
 	var target_position : Vector3 = _n_climb_check.get_collision_point() + Vector3(0.0, 1.0, 0.0)
+	var dist : float = _n_climb_check.global_position.y - _n_climb_check.get_collision_point().y
+	
+	_n_climb_space_check.position.y = -dist
+	
+	await get_tree().physics_frame # must wait for collision to update
+	
+	if _n_climb_space_check.has_overlapping_bodies():
+		_state.switch(States.DEFAULT)
+		return
 	
 #	var target_dir := Vector2(target_position.x, target_position.z).direction_to(Vector2(global_position.x, global_position.z)).normalized()
 #	var vel_dir := -Vector2(velocity.x, velocity.z).normalized()\
@@ -287,7 +295,6 @@ func _sl_CLIMB() -> void:
 #		_state.switch(States.DEFAULT)
 #		return
 	
-	var dist : float = _n_climb_check.global_position.y - _n_climb_check.get_collision_point().y
 	var climb_height : float = _n_climb_check.position.y + 1.0 - dist
 	var climb_time := climb_height / _CLIMB_SPEED
 	var cam_pos : Vector3 = _n_cam.position
@@ -309,14 +316,15 @@ func _sl_CLIMB() -> void:
 	
 	var tween_adjust := get_tree().create_tween().bind_node(self).parallel()
 	
-	tween_adjust.tween_property(_n_cam, "global_position", target_position + Vector3(0.0, _CAM_HEIGHT, 0.0), 0.25)
-	tween_adjust.tween_property(_n_cam, "rotation", cam_rot, 0.25)
+	tween_adjust.tween_property(_n_cam, "global_position", target_position + Vector3(0.0, _CAM_HEIGHT, 0.0), 0.1)
+	tween_adjust.tween_property(_n_cam, "rotation", cam_rot, 0.1)
 	
 	await tween_adjust.finished
 	
 	_n_cam.position = cam_pos
 	_n_cam.rotation = cam_rot
 	global_position = target_position
+	velocity = Vector3.ZERO
 	_state.switch(States.AIR)
 
 
