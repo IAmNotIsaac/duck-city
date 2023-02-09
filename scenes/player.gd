@@ -20,7 +20,6 @@ const _JUMP_FORCE := 7.0
 const _WALK_SPEED := 4.0
 const _RUN_SPEED := 7.0
 const _AIR_FRICTION := 0.1
-const _MAX_JUMPS := 1
 const _MAX_HEALTH := 100.0
 const _HEAL_RATE := 20.0 # health per second
 const _HOLD_HEALTH_TIME := 2000 # measured in milliseconds
@@ -33,7 +32,6 @@ const _CLIMB_DISTANCE := 0.7
 const _CLIMB_SPEED := 1.7
 
 var _state := StateMachine.new(self, States)
-var _jump_count := 0
 var _wallrun_cast : RayCast3D
 var _health := _MAX_HEALTH
 var _last_damage_time := 0
@@ -98,10 +96,7 @@ func _step_sound() -> void:
 	pass
 
 
-## State processes ##
-
-
-func _sp_GROUND(_delta : float) -> void:
+func _ground_movement(_delta : float) -> void:
 	var input := Vector2(
 		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
 		Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
@@ -121,33 +116,9 @@ func _sp_GROUND(_delta : float) -> void:
 		_step_sound()
 	
 	move_and_slide()
-	
-	if Input.is_action_just_pressed("jump"):
-		if _n_climb_check.is_colliding() and not _n_climb_space_check.has_overlapping_bodies():
-			_state.switch(States.CLIMB)
-	
-	elif Input.is_action_pressed("jump"):
-		_state.switch(States.JUMP)
-	
-	if not is_on_floor():
-		_state.switch(States.AIR)
-#	if not _n_hacky_floor_check.is_colliding():
-#		_state.switch(States.AIR)
 
 
-func _sp_LAND(delta : float) -> void:
-	_n_cam.v_offset = max(_n_cam.v_offset - 2.0 * delta, -0.2)
-	
-	if _state.get_state_time() > 0.1:
-		_state.switch(States.GROUND)
-	
-	move_and_slide()
-	
-	if Input.is_action_pressed("jump"):
-		_state.switch(States.JUMP)
-
-
-func _sp_AIR(delta : float) -> void:
+func _air_movement(delta : float) -> void:
 	var input := Vector2(
 		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
 		Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
@@ -163,16 +134,58 @@ func _sp_AIR(delta : float) -> void:
 	velocity.z = clamp(velocity.z + (move_forward.z + move_strafe.z) * _AIR_FRICTION, -_RUN_SPEED * speed_factor * max(_FAST_SPEED, 1.0), _RUN_SPEED * speed_factor * max(_FAST_SPEED, 1.0))
 	velocity.y -= accel
 	
-	var impact_vel := velocity.y
-	
 	move_and_slide()
+
+
+## State processes ##
+
+
+func _sp_GROUND(delta : float) -> void:
+	_ground_movement(delta)
 	
 	if Input.is_action_just_pressed("jump"):
 		if _n_climb_check.is_colliding() and not _n_climb_space_check.has_overlapping_bodies():
 			_state.switch(States.CLIMB)
+			return
+	
+	elif Input.is_action_pressed("jump"):
+		_state.switch(States.JUMP)
+		return
+	
+	if not is_on_floor():
+		_state.switch(States.AIR)
+		return
+
+
+func _sp_LAND(delta : float) -> void:
+	_n_cam.v_offset = max(_n_cam.v_offset - 2.0 * delta, -0.2)
+	
+	if _state.get_state_time() > 0.1:
+		_state.switch(States.GROUND)
+		return
+	
+	move_and_slide()
+	
+	if Input.is_action_pressed("jump"):
+		_state.switch(States.JUMP)
+		return
+
+
+func _sp_AIR(delta : float) -> void:
+	var impact_vel := velocity.y
+	var accel := _GRAVITY * delta
+	
+	_air_movement(delta)
+	
+	if Input.is_action_just_pressed("jump"):
+		print("%s %s" % [_n_climb_check.is_colliding(), _n_climb_space_check.has_overlapping_bodies()])
+		if _n_climb_check.is_colliding() and not _n_climb_space_check.has_overlapping_bodies():
+			_state.switch(States.CLIMB)
+			return
 	
 	if is_on_floor():
 		_state.switch(States.LAND if impact_vel < -accel - 0.1 else States.GROUND)
+		return
 	
 	if Input.is_action_just_pressed("jump"):
 		for c in [ {
@@ -186,10 +199,6 @@ func _sp_AIR(delta : float) -> void:
 				_wallrun_cast = c["raycast"]
 				_state.switch(States.WALLRUN)
 				return
-		
-		if _jump_count < _MAX_JUMPS:
-			velocity = (move_forward + move_strafe).normalized() * _RUN_SPEED
-			_state.switch(States.JUMP)
 
 
 func _sp_WALLRUN(_delta : float) -> void:
@@ -209,16 +218,17 @@ func _sp_WALLRUN(_delta : float) -> void:
 	_target_camera_tilt = _WALLRUN_CAM_TILT * (-1.0 if _wallrun_cast == _n_wallrunl_check else 1.0)
 	
 	if not _n_wallrun_tracker.get_collider():
-		_jump_count -= 1
 		_state.switch(States.JUMP)
+		return
 	
 	if Input.is_action_just_released("jump"):
-		_jump_count -= 1
 		velocity = normal * _JUMP_FORCE
 		_state.switch(States.JUMP)
+		return
 	
 	if is_on_floor():
 		_state.switch(States.GROUND)
+		return
 
 
 func _sp_DEAD(_delta : float) -> void:
@@ -230,7 +240,11 @@ func _sp_DEAD(_delta : float) -> void:
 
 func _sl_DEFAULT() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	_state.switch(States.GROUND)
+	
+	if is_on_floor():
+		_state.switch(States.GROUND)
+	else:
+		_state.switch(States.AIR)
 
 
 func _sl_WALLRUN() -> void:
@@ -243,7 +257,11 @@ func _su_WALLRUN() -> void:
 
 
 func _sl_LAND() -> void:
-	_jump_count = 0
+	pass
+
+
+func _sl_GROUND() -> void:
+	pass
 
 
 func _su_GROUND() -> void:
@@ -251,42 +269,55 @@ func _su_GROUND() -> void:
 
 
 func _sl_JUMP() -> void:
-	_jump_count += 1
 	velocity.y = _JUMP_FORCE
 	_state.switch(States.AIR)
 
 
 func _sl_CLIMB() -> void:
-	if _n_climb_check.is_colliding() and not _n_climb_space_check.has_overlapping_bodies():
-		var dist : float = _n_climb_check.global_position.y - _n_climb_check.get_collision_point().y
-		var target_position : Vector3 = _n_climb_check.get_collision_point() + Vector3(0.0, 1.0, 0.0)
-		var climb_height : float = _n_climb_check.position.y + 1.0 - dist
-		var climb_time := climb_height / _CLIMB_SPEED
-		var cam_pos : Vector3 = _n_cam.position
-		
-		var tween_bob := get_tree().create_tween().bind_node(self)
-		var tween_forward := get_tree().create_tween().bind_node(self)
-		
-		tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT - 0.5, climb_time).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT)
-		tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT + 0.25, 0.5 / _CLIMB_SPEED).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
-		tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT, 0.5 / _CLIMB_SPEED).set_trans(Tween.TRANS_QUAD)
-		
-		tween_forward.tween_property(_n_cam, "position:z", -_CLIMB_DISTANCE, 1.0 / _CLIMB_SPEED).set_delay(climb_time)
-		
-		await tween_bob.finished
-		
-		var tween_adjust := get_tree().create_tween().bind_node(self)
-		
-		tween_adjust.tween_property(_n_cam, "global_position", target_position + Vector3(0.0, _CAM_HEIGHT, 0.0), 0.25)
-		
-		await tween_adjust.finished
-		
-		_n_cam.position = cam_pos
-		global_position = target_position
-		_state.switch(States.GROUND)
-	
-	else:
+	if not _n_climb_check.is_colliding() or _n_climb_space_check.has_overlapping_bodies():
 		_state.switch(States.DEFAULT)
+		return
+	
+	var target_position : Vector3 = _n_climb_check.get_collision_point() + Vector3(0.0, 1.0, 0.0)
+	
+#	var target_dir := Vector2(target_position.x, target_position.z).direction_to(Vector2(global_position.x, global_position.z)).normalized()
+#	var vel_dir := -Vector2(velocity.x, velocity.z).normalized()\
+#
+#	if not (vel_dir == Vector2.ZERO or vel_dir == target_dir):
+#		_state.switch(States.DEFAULT)
+#		return
+	
+	var dist : float = _n_climb_check.global_position.y - _n_climb_check.get_collision_point().y
+	var climb_height : float = _n_climb_check.position.y + 1.0 - dist
+	var climb_time := climb_height / _CLIMB_SPEED
+	var cam_pos : Vector3 = _n_cam.position
+	var cam_rot : Vector3 = _n_cam.rotation
+	
+	var tween_bob := get_tree().create_tween().bind_node(self)
+	var tween_forward := get_tree().create_tween().bind_node(self)
+	var tween_tilt := get_tree().create_tween().bind_node(self)
+	
+	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT - 0.5, climb_time).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT)
+	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT + 0.25, 0.5 / _CLIMB_SPEED).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT, 0.5 / _CLIMB_SPEED).set_trans(Tween.TRANS_QUAD)
+	
+	tween_forward.tween_property(_n_cam, "position:z", -_CLIMB_DISTANCE, 1.0 / _CLIMB_SPEED).set_delay(climb_time)
+	
+	tween_tilt.tween_property(_n_cam, "rotation_degrees:z", PI, 0.25 / _CLIMB_SPEED).set_delay(climb_time * 0.8)
+	
+	await tween_bob.finished
+	
+	var tween_adjust := get_tree().create_tween().bind_node(self).parallel()
+	
+	tween_adjust.tween_property(_n_cam, "global_position", target_position + Vector3(0.0, _CAM_HEIGHT, 0.0), 0.25)
+	tween_adjust.tween_property(_n_cam, "rotation", cam_rot, 0.25)
+	
+	await tween_adjust.finished
+	
+	_n_cam.position = cam_pos
+	_n_cam.rotation = cam_rot
+	global_position = target_position
+	_state.switch(States.AIR)
 
 
 func _sl_DEAD() -> void:
