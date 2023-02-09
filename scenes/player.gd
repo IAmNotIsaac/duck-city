@@ -177,7 +177,7 @@ func _sp_AIR(delta : float) -> void:
 	
 	_air_movement(delta)
 	
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_pressed("jump"):
 		if _n_climb_check.is_colliding():
 			_state.switch(States.CLIMB)
 			return
