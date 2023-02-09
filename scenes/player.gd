@@ -209,7 +209,9 @@ func _sp_WALLRUN(_delta : float) -> void:
 		_last_step_sound = Time.get_ticks_msec()
 		_step_sound()
 	
-	velocity = -Vector3(cos(angle), 0.0, sin(angle)) * 10.0
+	var forvel : Vector3 = -Vector3(cos(angle), 0.0, sin(angle)) * 10.0
+	velocity = forvel
+	velocity += _n_wallrun_tracker.target_position
 	velocity.y = _WALLRUN_FALL_SPEED
 	
 	move_and_slide()
@@ -217,6 +219,7 @@ func _sp_WALLRUN(_delta : float) -> void:
 	_target_camera_tilt = _WALLRUN_CAM_TILT * (-1.0 if _wallrun_cast == _n_wallrunl_check else 1.0)
 	
 	if not _n_wallrun_tracker.get_collider():
+		velocity = forvel
 		_state.switch(States.JUMP)
 		return
 	
