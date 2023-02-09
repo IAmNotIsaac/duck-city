@@ -96,6 +96,23 @@ func _step_sound() -> void:
 	pass
 
 
+func _can_climb() -> bool:
+	if not _n_climb_check.is_colliding():
+		return false
+	
+	var target_position : Vector3 = _n_climb_check.get_collision_point() + Vector3(0.0, 1.0, 0.0)
+	var dist : float = _n_climb_check.global_position.y - _n_climb_check.get_collision_point().y
+	
+	_n_climb_space_check.position.y = -dist
+	
+	await get_tree().physics_frame # must wait for collision to update
+	
+	if _n_climb_space_check.has_overlapping_bodies():
+		return false
+	
+	return true
+
+
 func _ground_movement(_delta : float) -> void:
 	var input := Vector2(
 		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
@@ -144,7 +161,7 @@ func _sp_GROUND(delta : float) -> void:
 	_ground_movement(delta)
 	
 	if Input.is_action_just_pressed("jump"):
-		if _n_climb_check.is_colliding():
+		if await _can_climb():
 			_state.switch(States.CLIMB)
 			return
 	
@@ -178,7 +195,7 @@ func _sp_AIR(delta : float) -> void:
 	_air_movement(delta)
 	
 	if Input.is_action_pressed("jump"):
-		if _n_climb_check.is_colliding():
+		if await _can_climb():
 			_state.switch(States.CLIMB)
 			return
 	
