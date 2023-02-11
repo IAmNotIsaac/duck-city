@@ -68,7 +68,7 @@ func _ready() -> void:
 
 func _input(event : InputEvent) -> void:
 	if event is InputEventMouseMotion:
-		if not _state.matches(States.CLIMB):
+		if not _state.matches(States.QUICK_CLIMB):
 			_n_gimbal.rotation_degrees.y -= event.relative.x * Settings.camera_sensitivity
 			_n_cam.rotation_degrees.x -= event.relative.y * Settings.camera_sensitivity
 			_n_cam.rotation_degrees.x = clamp(_n_cam.rotation_degrees.x, -90, 90)
@@ -322,6 +322,7 @@ func _sl_JUMP() -> void:
 func _sl_CLIMB() -> void:
 	var target_position : Vector3 = _n_climb_check.get_collision_point() + Vector3(0.0, 1.0, 0.0)
 	var dist : float = _n_climb_check.global_position.y - _n_climb_check.get_collision_point().y
+	var dir := Vector3(global_position.x, 0.0, global_position.z).direction_to(Vector3(target_position.x, 0.0, target_position.z))
 	
 #	var target_dir := Vector2(target_position.x, target_position.z).direction_to(Vector2(global_position.x, global_position.z)).normalized()
 #	var vel_dir := -Vector2(velocity.x, velocity.z).normalized()\
@@ -334,6 +335,7 @@ func _sl_CLIMB() -> void:
 	var climb_time := climb_height / _CLIMB_SPEED
 	var cam_pos : Vector3 = _n_cam.position
 	var cam_rot : Vector3 = _n_cam.rotation
+	var gim_rot := atan2(-dir.z, dir.x) - 0.5 * PI
 	
 	var tween_bob := get_tree().create_tween().bind_node(self)
 	var tween_forward := get_tree().create_tween().bind_node(self)
@@ -353,6 +355,7 @@ func _sl_CLIMB() -> void:
 	
 	tween_adjust.tween_property(_n_cam, "global_position", target_position + Vector3(0.0, _CAM_HEIGHT, 0.0), 0.1)
 	tween_adjust.tween_property(_n_cam, "rotation", cam_rot, 0.1)
+	tween_adjust.tween_property(_n_gimbal, "rotation:y", gim_rot, 0.1)
 	
 	await tween_adjust.finished
 	
