@@ -13,6 +13,7 @@ enum AIStates {
 }
 
 
+const _GRAVITY := 20.0
 const _GENERIC_MOVE_SPEED := 8.0
 const _URGENT_MOVE_SPEED := 10.0
 const _ACCELERATION := 0.5
@@ -22,7 +23,6 @@ var _mstate := StateMachine.new(self, MoveStates, MoveStates.GROUND, "M")
 var _aistate := StateMachine.new(self, AIStates, AIStates.IDLE, "AI")
 
 var _acceleration := Vector3.ZERO
-var _air_velocity := Vector3.ZERO
 var _move_speed := 0.0
 
 @onready var _n_agent := $NavigationAgent3D
@@ -67,9 +67,25 @@ func _sp_M_GROUND(_delta : float) -> void:
 	_n_agent.set_velocity(velocity)
 	
 	move_and_slide()
+	
+	if not is_on_floor():
+		_mstate.switch(MoveStates.AIR)
+
+
+func _sp_M_AIR(delta : float) -> void:
+	velocity.y -= _GRAVITY * delta
+	
+	move_and_slide()
+	
+	if is_on_floor():
+		_mstate.switch(MoveStates.GROUND)
 
 
 ## State [un]loading (MoveStates) ##
+
+
+func _sl_M_GROUND() -> void:
+	velocity.y = 0.0
 
 
 ## State processes (AIStates) ##
