@@ -355,7 +355,7 @@ func _sl_CLIMB() -> void:
 	
 	tween_adjust.tween_property(_n_cam, "global_position", target_position + Vector3(0.0, _CAM_HEIGHT, 0.0), 0.1)
 	tween_adjust.tween_property(_n_cam, "rotation", cam_rot, 0.1)
-	tween_adjust.tween_property(_n_gimbal, "rotation:y", gim_rot, 0.1)
+#	tween_adjust.tween_property(_n_gimbal, "rotation:y", gim_rot, 0.1)
 	
 	await tween_adjust.finished
 	
