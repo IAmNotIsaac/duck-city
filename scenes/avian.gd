@@ -1,3 +1,4 @@
+class_name AvianMech
 extends CharacterBody3D
 
 
@@ -14,10 +15,11 @@ enum AIStates {
 
 
 const _GRAVITY := 20.0
-const _GENERIC_MOVE_SPEED := 8.0
-const _URGENT_MOVE_SPEED := 10.0
 const _ACCELERATION := 0.5
 const _DEACCELERATION := 0.25
+
+@export var _generic_move_speed := 0.0
+@export var _urgent_move_speed := 0.0
 
 var _mstate := StateMachine.new(self, MoveStates, MoveStates.GROUND, "M")
 var _aistate := StateMachine.new(self, AIStates, AIStates.IDLE, "AI")
@@ -115,8 +117,8 @@ func _sp_AI_URGENT_OBJECTIVE(delta : float) -> void:
 
 
 func _sl_AI_GENERIC_OBJECTIVE() -> void:
-	_move_speed = _GENERIC_MOVE_SPEED
+	_move_speed = _generic_move_speed
 
 
 func _sl_AI_URGENT_OBJECTIVE() -> void:
-	_move_speed = _URGENT_MOVE_SPEED
+	_move_speed = _urgent_move_speed
