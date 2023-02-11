@@ -5,24 +5,26 @@ var _owner : Object
 var _states : Dictionary
 var _state := 0
 var _state_time := 0.0
+var _prefix : String
 
 
 ## Private methods ##
 
-func _init(owner : Object, states : Dictionary, default_state := 0) -> void:
+func _init(owner : Object, states : Dictionary, default_state := 0, id_prefix := "") -> void:
 	_owner = owner
 	_states = states
 	_state = default_state
+	_prefix = id_prefix + "_" if id_prefix != "" else ""
 
 
 func _unload_state() -> void:
-	var func_name : String = "_su_" + _states.keys()[_state]
+	var func_name : String = "_su_" + _prefix + _states.keys()[_state]
 	if _owner.has_method(func_name):
 		_owner.call(func_name)
 
 
 func _load_state() -> void:
-	var func_name : String = "_sl_" + _states.keys()[_state]
+	var func_name : String = "_sl_" + _prefix + _states.keys()[_state]
 	if _owner.has_method(func_name):
 		_owner.call(func_name)
 
@@ -30,7 +32,7 @@ func _load_state() -> void:
 ## Public methods ##
 
 func process(delta : float) -> void:
-	var func_name : String = "_sp_" + _states.keys()[_state]
+	var func_name : String = "_sp_" + _prefix + _states.keys()[_state]
 	if _owner.has_method(func_name):
 		_owner.call(func_name, delta)
 
