@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcygeqsv86edb"]
+
+[ext_resource type="PackedScene" uid="uid://dax60lamump8a" path="res://scenes/mechs/avian_mech.tscn" id="1_vkgv5"]
+
+[node name="Avian" instance=ExtResource("1_vkgv5")]
+_target_type = 1
+_generic_move_speed = 6.0
+_urgent_move_speed = 8.0
+_chase_move_speed = 8.0

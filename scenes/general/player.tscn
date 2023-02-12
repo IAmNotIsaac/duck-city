@@ -1,7 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://cefxtd160f7sx"]
+[gd_scene load_steps=7 format=3]
 
-[ext_resource type="Script" path="res://scenes/player.gd" id="1_2yci0"]
-[ext_resource type="PackedScene" uid="uid://dig4git6xowtn" path="res://scenes/avian_target.tscn" id="2_fw8d5"]
+[ext_resource type="Script" path="res://scenes/general/player.gd" id="1_2yci0"]
+[ext_resource type="PackedScene" path="res://scenes/tools/avian_target.tscn" id="2_fw8d5"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_i4mqd"]
 radius = 0.25

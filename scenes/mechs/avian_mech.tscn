@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dax60lamump8a"]
 
-[ext_resource type="Script" path="res://scenes/avian_mech.gd" id="1_m3r7s"]
+[ext_resource type="Script" path="res://scenes/mechs/avian_mech.gd" id="1_kvhce"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hf4g8"]
 radius = 2.0
@@ -16,7 +16,7 @@ radius = 2.0
 height = 6.0
 
 [node name="Avian" type="CharacterBody3D"]
-script = ExtResource("1_m3r7s")
+script = ExtResource("1_kvhce")
 
 [node name="Body" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_hf4g8")
@@ -47,6 +47,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="DebugStateLabel" type="Label3D" parent="."]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 4, 0)
+visible = false
 billboard = 1
 no_depth_test = true
 fixed_size = true

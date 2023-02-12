@@ -1,8 +1,8 @@
-[gd_scene load_steps=17 format=3 uid="uid://cd33h06rt8rxq"]
+[gd_scene load_steps=17 format=3 uid="uid://dk75xijpl5c2d"]
 
 [ext_resource type="Texture2D" uid="uid://ksbk55dx0kg" path="res://icon.svg" id="1_xyldx"]
-[ext_resource type="PackedScene" uid="uid://bue2wcdv1pkml" path="res://scenes/duck_mech.tscn" id="2_lew8s"]
-[ext_resource type="PackedScene" uid="uid://cefxtd160f7sx" path="res://scenes/player.tscn" id="2_tqf1i"]
+[ext_resource type="PackedScene" path="res://scenes/general/player.tscn" id="2_fy8q3"]
+[ext_resource type="PackedScene" uid="uid://bcygeqsv86edb" path="res://scenes/mechs/duck_mech.tscn" id="3_k3awn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h8tsu"]
 
@@ -154,8 +154,8 @@ shape = SubResource("BoxShape3D_1nywh")
 material_override = SubResource("StandardMaterial3D_34s44")
 mesh = SubResource("BoxMesh_xri03")
 
-[node name="Player" parent="." instance=ExtResource("2_tqf1i")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1, -11)
+[node name="Player" parent="." instance=ExtResource("2_fy8q3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="Duck" parent="." instance=ExtResource("2_lew8s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.98146, 38.9245, 25)
+[node name="Avian" parent="." instance=ExtResource("3_k3awn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 17)

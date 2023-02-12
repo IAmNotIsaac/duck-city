@@ -334,8 +334,8 @@ func _sl_CLIMB() -> void:
 	var climb_height : float = _n_climb_check.position.y + 1.0 - dist
 	var climb_time := climb_height / _CLIMB_SPEED
 	var cam_pos : Vector3 = _n_cam.position
-	var cam_rot : Vector3 = _n_cam.rotation
-	var gim_rot := atan2(-dir.z, dir.x) - 0.5 * PI
+#	var cam_rot : Vector3 = _n_cam.rotation
+#	var gim_rot := atan2(-dir.z, dir.x) - 0.5 * PI
 	
 	var tween_bob := get_tree().create_tween().bind_node(self)
 	var tween_forward := get_tree().create_tween().bind_node(self)
@@ -354,13 +354,13 @@ func _sl_CLIMB() -> void:
 	var tween_adjust := get_tree().create_tween().bind_node(self).parallel()
 	
 	tween_adjust.tween_property(_n_cam, "global_position", target_position + Vector3(0.0, _CAM_HEIGHT, 0.0), 0.1)
-	tween_adjust.tween_property(_n_cam, "rotation", cam_rot, 0.1)
+#	tween_adjust.tween_property(_n_cam, "rotation", cam_rot, 0.1)
 #	tween_adjust.tween_property(_n_gimbal, "rotation:y", gim_rot, 0.1)
 	
 	await tween_adjust.finished
 	
 	_n_cam.position = cam_pos
-	_n_cam.rotation = cam_rot
+#	_n_cam.rotation = cam_rot
 	global_position = target_position
 	velocity = Vector3.ZERO
 	_state.switch(States.DEFAULT)

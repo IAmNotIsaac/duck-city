@@ -2,5 +2,6 @@ extends Node
 
 
 enum AvianType {
-	Avian
+	AVIAN,
+	DUCK
 }

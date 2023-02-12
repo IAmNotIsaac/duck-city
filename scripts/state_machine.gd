@@ -34,6 +34,7 @@ func _load_state() -> void:
 func append_states(states : Dictionary, overwrite := false) -> void:
 	_states.merge(states, overwrite)
 
+
 func process(delta : float) -> void:
 	var func_name : String = "_sp_" + _prefix + _states.keys()[_state]
 	if _owner.has_method(func_name):

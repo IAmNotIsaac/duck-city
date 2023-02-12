@@ -21,7 +21,7 @@ const _GRAVITY := 20.0
 const _ACCELERATION := 0.5
 const _DEACCELERATION := 0.25
 
-@export var _target_type := Constants.AvianType.Avian
+@export var _target_type := Constants.AvianType.AVIAN
 @export var _generic_move_speed := 0.0
 @export var _urgent_move_speed := 0.0
 @export var _chase_move_speed := 0.0
@@ -47,7 +47,7 @@ func _ready() -> void:
 
 
 func _process(delta : float) -> void:
-#	$DebugStateLabel.text = AIStates.keys()[_aistate.get_state()] + "\n" + MoveStates.keys()[_mstate.get_state()]
+	$DebugStateLabel.text = AIStates.keys()[_aistate.get_state()] + "\n" + MoveStates.keys()[_mstate.get_state()]
 	_aistate.process(delta)
 	
 	if Input.is_action_pressed("interact"):
@@ -133,7 +133,7 @@ func _sl_M_GROUND() -> void:
 func _sp_AI_IDLE(_delta : float) -> void:
 	_acceleration = -velocity * _DEACCELERATION
 	
-	for t in get_tree().get_nodes_in_group(Constants.AvianType.keys()[_target_type] + "_target"):
+	for t in get_tree().get_nodes_in_group(Constants.AvianType.keys()[_target_type] + "_target") + get_tree().get_nodes_in_group("AVIAN_target"):
 		if await _is_target_visible(t):
 			chase_target(t)
 			return

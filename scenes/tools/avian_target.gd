@@ -3,7 +3,7 @@ extends Node3D
 
 
 @export var _enabled := true
-@export var _avian_type := Constants.AvianType.Avian
+@export var _avian_type := Constants.AvianType.AVIAN
 @export_node_path("PhysicsBody3D") var collider_path = ^".."
 
 
