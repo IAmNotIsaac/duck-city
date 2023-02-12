@@ -1,6 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://ddupvsdl8lfux"]
+[gd_scene load_steps=6 format=3 uid="uid://dax60lamump8a"]
 
-[ext_resource type="Script" path="res://scenes/avian.gd" id="1_p72oi"]
+[ext_resource type="Script" path="res://scenes/avian_mech.gd" id="1_m3r7s"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hf4g8"]
 radius = 2.0
@@ -16,7 +16,7 @@ radius = 2.0
 height = 6.0
 
 [node name="Avian" type="CharacterBody3D"]
-script = ExtResource("1_p72oi")
+script = ExtResource("1_m3r7s")
 
 [node name="Body" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_hf4g8")

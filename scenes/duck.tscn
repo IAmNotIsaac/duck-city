@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dn7j67456gcq8"]
-
-[ext_resource type="PackedScene" uid="uid://ddupvsdl8lfux" path="res://scenes/avian.tscn" id="1_r0je6"]
-
-[node name="Duck" instance=ExtResource("1_r0je6")]
-_generic_move_speed = 6.0
-_urgent_move_speed = 8.0
-_chase_move_speed = 8.0

@@ -1,7 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://bfqs6cypm3udt"]
+[gd_scene load_steps=17 format=3 uid="uid://cd33h06rt8rxq"]
 
 [ext_resource type="Texture2D" uid="uid://ksbk55dx0kg" path="res://icon.svg" id="1_xyldx"]
-[ext_resource type="PackedScene" uid="uid://dn7j67456gcq8" path="res://scenes/duck.tscn" id="2_lew8s"]
+[ext_resource type="PackedScene" uid="uid://bue2wcdv1pkml" path="res://scenes/duck_mech.tscn" id="2_lew8s"]
 [ext_resource type="PackedScene" uid="uid://cefxtd160f7sx" path="res://scenes/player.tscn" id="2_tqf1i"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h8tsu"]
