@@ -158,4 +158,4 @@ mesh = SubResource("BoxMesh_xri03")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1, -11)
 
 [node name="Duck" parent="." instance=ExtResource("2_lew8s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 26, 25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.98146, 38.9245, 25)

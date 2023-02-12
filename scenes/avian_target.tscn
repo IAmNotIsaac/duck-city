@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dig4git6xowtn"]
+
+[ext_resource type="Script" path="res://scenes/avian_target.gd" id="1_niom4"]
+
+[node name="AvianTarget" type="Node3D"]
+script = ExtResource("1_niom4")

@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://cefxtd160f7sx"]
+[gd_scene load_steps=7 format=3 uid="uid://cefxtd160f7sx"]
 
 [ext_resource type="Script" path="res://scenes/player.gd" id="1_2yci0"]
+[ext_resource type="PackedScene" uid="uid://dig4git6xowtn" path="res://scenes/avian_target.tscn" id="2_fw8d5"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_i4mqd"]
 radius = 0.25
@@ -17,6 +18,8 @@ size = Vector3(0.25, 1.8, 0.25)
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_2yci0")
 
+[node name="AvianTarget" parent="." instance=ExtResource("2_fw8d5")]
+
 [node name="BodyCollision" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 shape = SubResource("CapsuleShape3D_i4mqd")
@@ -26,12 +29,13 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.
 shape = SubResource("SeparationRayShape3D_og5qh")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-visible = false
+layers = 2
 mesh = SubResource("CapsuleMesh_xpto2")
 
 [node name="Gimbal" type="Node3D" parent="."]
 
 [node name="Camera3D" type="Camera3D" parent="Gimbal"]
+cull_mask = 1048573
 current = true
 
 [node name="InteractCast" type="RayCast3D" parent="Gimbal/Camera3D"]
