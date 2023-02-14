@@ -147,7 +147,7 @@ func _sp_AI_GENERIC_OBJECTIVE(_delta : float) -> void:
 		_aistate.switch(AIStates.IDLE)
 		return
 	
-	for t in get_tree().get_nodes_in_group(Constants.AvianType.keys()[_target_type] + "_target"):
+	for t in get_tree().get_nodes_in_group(Constants.AvianType.keys()[_target_type] + "_target") + get_tree().get_nodes_in_group("AVIAN_target"):
 		if await _is_target_visible(t):
 			chase_target(t)
 			return
