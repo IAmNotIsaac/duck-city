@@ -176,11 +176,19 @@ func _air_movement(delta : float) -> void:
 	move_and_slide()
 
 
+func _permit_interact() -> void:
+	if Input.is_action_pressed("interact"):
+		var col = _n_interact_cast.get_collider()
+		if col is InteractArea:
+			col.interact(not Input.is_action_just_pressed("interact"))
+
+
 ## State processes ##
 
 
 func _sp_GROUND(delta : float) -> void:
 	_ground_movement(delta)
+	_permit_interact()
 	
 	if Input.is_action_pressed("run"):
 		if await _can_quick_climb() and is_equal_approx(velocity.length(), _RUN_SPEED * _FAST_SPEED):
@@ -203,6 +211,7 @@ func _sp_GROUND(delta : float) -> void:
 
 func _sp_LAND(delta : float) -> void:
 	_n_cam.v_offset = max(_n_cam.v_offset - 2.0 * delta, -0.2)
+	_permit_interact()
 	
 	if _state.get_state_time() > 0.1:
 		_state.switch(States.GROUND)
@@ -220,6 +229,7 @@ func _sp_AIR(delta : float) -> void:
 	var accel := _GRAVITY * delta
 	
 	_air_movement(delta)
+	_permit_interact()
 	
 	if Input.is_action_pressed("jump"):
 		if await _can_climb():

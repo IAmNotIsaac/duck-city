@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cya7kxffqoqvj"]
+
+[ext_resource type="Script" path="res://scenes/tools/interact_area.gd" id="1_ea0vs"]
+
+[node name="InteractArea" type="Area3D"]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("1_ea0vs")
+metadata/_edit_group_ = true

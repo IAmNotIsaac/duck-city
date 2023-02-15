@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=7 format=3 uid="uid://c35ug12xrl8p3"]
 
 [ext_resource type="Script" path="res://scenes/general/player.gd" id="1_2yci0"]
 [ext_resource type="PackedScene" path="res://scenes/tools/avian_target.tscn" id="2_fw8d5"]
@@ -39,6 +39,10 @@ cull_mask = 1048573
 current = true
 
 [node name="InteractCast" type="RayCast3D" parent="Gimbal/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+target_position = Vector3(0, -2, 0)
+collision_mask = 9
+collide_with_areas = true
 
 [node name="WallrunLeftCheck" type="RayCast3D" parent="Gimbal"]
 target_position = Vector3(-1, 0, 0)
