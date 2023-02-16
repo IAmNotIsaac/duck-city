@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://cavorm3ap5bx3"]
+
+[ext_resource type="Script" path="res://scenes/tools/button.gd" id="1_50cag"]
+[ext_resource type="PackedScene" uid="uid://cya7kxffqoqvj" path="res://scenes/tools/interact_area.tscn" id="1_h17ce"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_54y4n"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_5e8hd"]
+
+[node name="Button" type="Node3D"]
+script = ExtResource("1_50cag")
+
+[node name="InteractArea" parent="." instance=ExtResource("1_h17ce")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractArea"]
+shape = SubResource("BoxShape3D_54y4n")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_5e8hd")
+
+[connection signal="interacted" from="InteractArea" to="." method="_on_interact_area_interacted"]

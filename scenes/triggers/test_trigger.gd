@@ -1,9 +1,9 @@
 extends Trigger
 
 
-func activate() -> void:
+func _on_activated() -> void:
 	print("Activated")
 
 
-func deactivate() -> void:
+func _on_deactivated() -> void:
 	print("Deactivated")

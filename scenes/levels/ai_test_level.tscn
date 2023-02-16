@@ -1,9 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://dk75xijpl5c2d"]
+[gd_scene load_steps=19 format=3 uid="uid://dk75xijpl5c2d"]
 
 [ext_resource type="Texture2D" uid="uid://ksbk55dx0kg" path="res://icon.svg" id="1_xyldx"]
 [ext_resource type="PackedScene" uid="uid://c35ug12xrl8p3" path="res://scenes/general/player.tscn" id="2_fy8q3"]
 [ext_resource type="PackedScene" uid="uid://bcygeqsv86edb" path="res://scenes/mechs/duck_mech.tscn" id="3_k3awn"]
-[ext_resource type="PackedScene" uid="uid://cya7kxffqoqvj" path="res://scenes/tools/interact_area.tscn" id="4_0yenf"]
+[ext_resource type="PackedScene" uid="uid://cavorm3ap5bx3" path="res://scenes/tools/button.tscn" id="5_24q6q"]
 [ext_resource type="PackedScene" uid="uid://da7nu3xoiq6l6" path="res://scenes/triggers/test_trigger.tscn" id="5_grq63"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h8tsu"]
@@ -57,10 +57,6 @@ albedo_texture = ExtResource("1_xyldx")
 
 [sub_resource type="BoxMesh" id="BoxMesh_iu1g7"]
 size = Vector3(10, 1, 5)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_pqnuy"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_g0k5r"]
 
 [node name="AITestLevel" type="Node3D"]
 
@@ -166,14 +162,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 [node name="Avian" parent="." instance=ExtResource("3_k3awn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 17)
 
-[node name="InteractArea" parent="." instance=ExtResource("4_0yenf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.000891209, 0.995714, -9.99944)
-_target_path = NodePath("../Trigger")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractArea"]
-shape = SubResource("BoxShape3D_pqnuy")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="InteractArea"]
-mesh = SubResource("BoxMesh_g0k5r")
-
 [node name="Trigger" parent="." instance=ExtResource("5_grq63")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -10)
+
+[node name="Button" parent="." instance=ExtResource("5_24q6q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -10)
+_target_path = NodePath("../Trigger")
