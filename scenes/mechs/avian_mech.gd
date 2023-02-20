@@ -13,6 +13,7 @@ enum AIStates {
 	GENERIC_OBJECTIVE,
 	URGENT_OBJECTIVE,
 	CHASE_TARGET,
+	WANDER,
 	AI_STATES_MAX
 }
 
@@ -22,6 +23,7 @@ const _ACCELERATION := 0.5
 const _DEACCELERATION := 0.25
 
 @export var _target_type := Constants.AvianType.AVIAN
+@export_node_path("WanderPoints") var _wander_points_path : NodePath
 @export var _generic_move_speed := 0.0
 @export var _urgent_move_speed := 0.0
 @export var _chase_move_speed := 0.0
@@ -32,18 +34,27 @@ var _aistate := StateMachine.new(self, AIStates, AIStates.IDLE, "AI")
 var _acceleration := Vector3.ZERO
 var _move_speed := 0.0
 var _target : AvianTarget
+var _wander_points : PackedVector3Array
 
 @onready var _n_agent := $NavigationAgent3D
 @onready var _n_gimbal := $Gimbal
 @onready var _n_eyes := $Gimbal/Eyes
 @onready var _n_eyes_check := $EyesCheck
+@onready var _n_idle_timer := $IdleTimer
 
 
 ## Private methods ##
 
 
 func _ready() -> void:
-	goto_objective(Vector3.ZERO)
+	_mstate.ready()
+	_aistate.ready()
+	
+	_wander_points = []
+	if not _wander_points_path.is_empty():
+		var wpn := get_node(_wander_points_path)
+		if wpn is WanderPoints:
+			_wander_points = wpn.get_wander_points()
 
 
 func _process(delta : float) -> void:
@@ -69,6 +80,10 @@ func _rotate_on_path() -> void:
 	var direction := global_position.direction_to(tpos)
 	var dir := Vector2(direction.x, direction.z).normalized()
 	_n_gimbal.rotation.y = atan2(-dir.y, dir.x)
+
+
+func _target_nodes():
+	return get_tree().get_nodes_in_group(Constants.AvianType.keys()[_target_type] + "_target") + get_tree().get_nodes_in_group("AVIAN_target")
 
 
 func _is_target_visible(target : AvianTarget) -> bool:
@@ -133,10 +148,13 @@ func _sl_M_GROUND() -> void:
 func _sp_AI_IDLE(_delta : float) -> void:
 	_acceleration = -velocity * _DEACCELERATION
 	
-	for t in get_tree().get_nodes_in_group(Constants.AvianType.keys()[_target_type] + "_target") + get_tree().get_nodes_in_group("AVIAN_target"):
+	for t in _target_nodes():
 		if await _is_target_visible(t):
 			chase_target(t)
 			return
+	
+	if _n_idle_timer.get_time_left() == 0.0:
+		_aistate.switch(AIStates.WANDER)
 
 
 func _sp_AI_GENERIC_OBJECTIVE(_delta : float) -> void:
@@ -147,7 +165,7 @@ func _sp_AI_GENERIC_OBJECTIVE(_delta : float) -> void:
 		_aistate.switch(AIStates.IDLE)
 		return
 	
-	for t in get_tree().get_nodes_in_group(Constants.AvianType.keys()[_target_type] + "_target") + get_tree().get_nodes_in_group("AVIAN_target"):
+	for t in _target_nodes():
 		if await _is_target_visible(t):
 			chase_target(t)
 			return
@@ -171,6 +189,20 @@ func _sp_AI_CHASE_TARGET(_delta : float) -> void:
 		_n_agent.set_target_position(_target.get_global_position())
 	
 	elif _n_agent.is_navigation_finished():
+		_aistate.switch(AIStates.WANDER)
+		return
+	
+	_accelerate_on_path()
+	_rotate_on_path()
+
+
+func _sp_AI_WANDER(_delta : float) -> void:
+	for t in _target_nodes():
+		if await _is_target_visible(t):
+			chase_target(t)
+			return
+	
+	if _n_agent.is_navigation_finished():
 		_aistate.switch(AIStates.IDLE)
 		return
 	
@@ -179,6 +211,9 @@ func _sp_AI_CHASE_TARGET(_delta : float) -> void:
 
 
 ## State [un]loading (AIStates) ##
+
+func _sl_AI_IDLE() -> void:
+	_n_idle_timer.start()
 
 
 func _sl_AI_GENERIC_OBJECTIVE() -> void:
@@ -191,3 +226,9 @@ func _sl_AI_URGENT_OBJECTIVE() -> void:
 
 func _sl_AI_CHASE_TARGET() -> void:
 	_move_speed = _chase_move_speed
+
+
+func _sl_AI_WANDER() -> void:
+	_move_speed = _generic_move_speed
+	if _wander_points:
+		_n_agent.set_target_position(_wander_points[randi() % len(_wander_points)])

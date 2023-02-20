@@ -7,3 +7,9 @@ _target_type = 1
 _generic_move_speed = 6.0
 _urgent_move_speed = 8.0
 _chase_move_speed = 8.0
+
+[node name="DebugStateLabel" parent="." index="4"]
+visible = true
+
+[node name="IdleTimer" parent="." index="5"]
+wait_time = 2.0

@@ -3,6 +3,7 @@ class_name StateMachine
 
 var _owner : Object
 var _states : Dictionary
+var _default_state := 0
 var _state := 0
 var _state_time := 0.0
 var _prefix : String
@@ -13,6 +14,7 @@ var _prefix : String
 func _init(owner : Object, states : Dictionary, default_state := 0, id_prefix := "") -> void:
 	_owner = owner
 	_states = states
+	_default_state = default_state
 	_state = default_state
 	_prefix = id_prefix + "_" if id_prefix != "" else ""
 
@@ -33,6 +35,12 @@ func _load_state() -> void:
 
 func append_states(states : Dictionary, overwrite := false) -> void:
 	_states.merge(states, overwrite)
+
+
+func ready() -> void:
+	_state = _default_state
+	_state_time = Time.get_ticks_msec() * 0.001
+	_load_state()
 
 
 func process(delta : float) -> void:

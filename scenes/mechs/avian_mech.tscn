@@ -54,3 +54,6 @@ billboard = 1
 no_depth_test = true
 fixed_size = true
 text = "dasd"
+
+[node name="IdleTimer" type="Timer" parent="."]
+one_shot = true
