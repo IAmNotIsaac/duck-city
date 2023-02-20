@@ -91,7 +91,6 @@ func _target_nodes():
 func _is_target_visible(target : AvianTarget) -> bool:
 	if target.is_enabled() and _n_eyes.is_position_in_frustum(target.get_global_position()):
 		_n_eyes_check.set_target_position(target.get_global_position() - _n_eyes_check.get_global_position())
-		await get_tree().process_frame
 		
 		return _n_eyes_check.get_collider() == target.get_collider()
 	
@@ -151,7 +150,7 @@ func _sp_AI_IDLE(_delta : float) -> void:
 	_acceleration = -velocity * _DEACCELERATION
 	
 	for t in _target_nodes():
-		if await _is_target_visible(t):
+		if _is_target_visible(t):
 			chase_target(t)
 			return
 	
@@ -168,7 +167,7 @@ func _sp_AI_GENERIC_OBJECTIVE(_delta : float) -> void:
 		return
 	
 	for t in _target_nodes():
-		if await _is_target_visible(t):
+		if _is_target_visible(t):
 			chase_target(t)
 			return
 
@@ -187,7 +186,7 @@ func _sp_AI_CHASE_TARGET(_delta : float) -> void:
 		_aistate.switch(AIStates.IDLE)
 		return
 	
-	if await _is_target_visible(_target):
+	if _is_target_visible(_target):
 		_n_agent.set_target_position(_target.get_global_position())
 	
 	elif _n_agent.is_navigation_finished():
@@ -203,7 +202,7 @@ func _sp_AI_CHASE_TARGET(_delta : float) -> void:
 
 func _sp_AI_WANDER(_delta : float) -> void:
 	for t in _target_nodes():
-		if await _is_target_visible(t):
+		if _is_target_visible(t):
 			chase_target(t)
 			return
 	
