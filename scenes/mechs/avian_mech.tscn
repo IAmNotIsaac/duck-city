@@ -41,6 +41,8 @@ skeleton = NodePath("../..")
 [node name="Eyes" type="Camera3D" parent="Gimbal"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 1, 0)
 cull_mask = 1048571
+fov = 90.0
+far = 10.0
 
 [node name="EyesCheck" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
