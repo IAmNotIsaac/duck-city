@@ -58,7 +58,6 @@ var speed_factor := 1.0
 
 ## Private methods ##
 
-
 func _ready() -> void:
 	_n_cam.position.y = _CAM_HEIGHT
 	_n_climb_check.position.z = -_CLIMB_DISTANCE
@@ -185,7 +184,6 @@ func _permit_interact() -> void:
 
 ## State processes ##
 
-
 func _sp_GROUND(delta : float) -> void:
 	_ground_movement(delta)
 	_permit_interact()
@@ -292,7 +290,6 @@ func _sp_DEAD(_delta : float) -> void:
 
 
 ## State [un]loading ##
-
 
 func _sl_DEFAULT() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -425,10 +422,18 @@ func _sl_DEAD() -> void:
 
 ## Public methods ##
 
-
 func damage(damage_data : Damage) -> void:
+	match _state:
+		States.CLIMB:
+			if damage_data.is_avian():
+				return
+		
+		States.DEAD:
+			return
+	
 	if Time.get_ticks_msec() - _last_damage_time > _DAMAGE_COOLDOWN:
 		_last_damage_time = Time.get_ticks_msec()
+		_health -= damage_data.amount
 
 
 func die() -> void:

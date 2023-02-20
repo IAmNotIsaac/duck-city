@@ -62,3 +62,5 @@ shape = SubResource("BoxShape3D_ab24k")
 
 [node name="WallrunTracker" type="RayCast3D" parent="."]
 target_position = Vector3(0, 0, 0)
+
+[connection signal="damaged" from="AvianTarget" to="." method="damage"]

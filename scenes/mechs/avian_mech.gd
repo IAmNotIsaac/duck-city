@@ -27,6 +27,8 @@ const _DEACCELERATION := 0.25
 @export var _generic_move_speed := 0.0
 @export var _urgent_move_speed := 0.0
 @export var _chase_move_speed := 0.0
+@export var _attack_reach := 2.0
+@export var _attack_amount := 50.0
 
 var _mstate := StateMachine.new(self, MoveStates, MoveStates.GROUND, "M")
 var _aistate := StateMachine.new(self, AIStates, AIStates.IDLE, "AI")
@@ -191,6 +193,9 @@ func _sp_AI_CHASE_TARGET(_delta : float) -> void:
 	elif _n_agent.is_navigation_finished():
 		_aistate.switch(AIStates.WANDER)
 		return
+	
+	if global_position.distance_to(_target.get_global_position()) <= _attack_reach:
+		_target.damage(Damage.new(Damage.DamageType.AVIAN_INDISCRIMINANT, _attack_amount))
 	
 	_accelerate_on_path()
 	_rotate_on_path()

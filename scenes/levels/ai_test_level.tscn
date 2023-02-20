@@ -163,6 +163,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 25)
 [node name="Avian" parent="." instance=ExtResource("3_k3awn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 8)
 _wander_points_path = NodePath("../WanderPoints")
+_attack_reach = 2.0
+_attack_amount = 50.0
 
 [node name="Trigger" parent="." instance=ExtResource("5_grq63")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -10)
