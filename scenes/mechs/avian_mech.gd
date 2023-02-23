@@ -14,6 +14,7 @@ enum AIStates {
 	URGENT_OBJECTIVE,
 	CHASE_TARGET,
 	WANDER,
+	ALERT,
 	AI_STATES_MAX
 }
 
@@ -47,7 +48,6 @@ var _wander_points : PackedVector3Array
 
 ## Private methods ##
 
-
 func _ready() -> void:
 	_mstate.ready()
 	_aistate.ready()
@@ -63,8 +63,8 @@ func _process(delta : float) -> void:
 	$DebugStateLabel.text = AIStates.keys()[_aistate.get_state()] + "\n" + MoveStates.keys()[_mstate.get_state()]
 	_aistate.process(delta)
 	
-	if Input.is_action_pressed("interact"):
-		goto_objective(get_parent().get_node("Player").position)
+#	if Input.is_action_pressed("interact"):
+#		goto_objective(get_parent().get_node("Player").position)
 
 
 func _physics_process(delta : float) -> void:
@@ -99,7 +99,6 @@ func _is_target_visible(target : AvianTarget) -> bool:
 
 ## Public methods ##
 
-
 func goto_objective(pos : Vector3, urgent := false) -> void:
 	_n_agent.set_target_position(pos)
 	if not urgent:
@@ -113,8 +112,12 @@ func chase_target(target : AvianTarget) -> void:
 	_aistate.switch(AIStates.CHASE_TARGET)
 
 
-## State processes (MoveStates) ##
+func alert(pos : Vector3) -> void:
+	_n_agent.set_target_position(pos)
+	_aistate.switch(AIStates.ALERT)
 
+
+## State processes (MoveStates) ##
 
 func _sp_M_GROUND(_delta : float) -> void:
 	velocity += _acceleration
@@ -138,13 +141,11 @@ func _sp_M_AIR(delta : float) -> void:
 
 ## State [un]loading (MoveStates) ##
 
-
 func _sl_M_GROUND() -> void:
 	velocity.y = 0.0
 
 
 ## State processes (AIStates) ##
-
 
 func _sp_AI_IDLE(_delta : float) -> void:
 	_acceleration = -velocity * _DEACCELERATION
@@ -214,6 +215,20 @@ func _sp_AI_WANDER(_delta : float) -> void:
 	_rotate_on_path()
 
 
+func _sp_AI_ALERT(_delta : float) -> void:
+	for t in _target_nodes():
+		if _is_target_visible(t):
+			chase_target(t)
+			return
+	
+	if _n_agent.is_navigation_finished():
+		_aistate.switch(AIStates.IDLE)
+		return
+	
+	_accelerate_on_path()
+	_rotate_on_path()
+
+
 ## State [un]loading (AIStates) ##
 
 func _sl_AI_IDLE() -> void:
@@ -236,3 +251,7 @@ func _sl_AI_WANDER() -> void:
 	_move_speed = _generic_move_speed
 	if _wander_points:
 		_n_agent.set_target_position(_wander_points[randi() % len(_wander_points)])
+
+
+func _sl_AI_ALERT() -> void:
+	_move_speed = _chase_move_speed

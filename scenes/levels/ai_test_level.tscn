@@ -1,11 +1,13 @@
-[gd_scene load_steps=20 format=3 uid="uid://dk75xijpl5c2d"]
+[gd_scene load_steps=22 format=3 uid="uid://dk75xijpl5c2d"]
 
 [ext_resource type="Texture2D" uid="uid://ksbk55dx0kg" path="res://icon.svg" id="1_xyldx"]
 [ext_resource type="PackedScene" uid="uid://c35ug12xrl8p3" path="res://scenes/general/player.tscn" id="2_fy8q3"]
 [ext_resource type="PackedScene" uid="uid://bcygeqsv86edb" path="res://scenes/mechs/duck_mech.tscn" id="3_k3awn"]
+[ext_resource type="PackedScene" uid="uid://do74lmtxbmqyh" path="res://scenes/triggers/play_audio_trigger.tscn" id="5_8c48e"]
 [ext_resource type="PackedScene" uid="uid://cavorm3ap5bx3" path="res://scenes/tools/button.tscn" id="5_24q6q"]
-[ext_resource type="PackedScene" uid="uid://da7nu3xoiq6l6" path="res://scenes/triggers/test_trigger.tscn" id="5_grq63"]
 [ext_resource type="PackedScene" uid="uid://d02jjwameoskw" path="res://scenes/tools/wander_points.tscn" id="6_1jtem"]
+[ext_resource type="PackedScene" uid="uid://dfefyx6hkggug" path="res://scenes/tools/avian_mech_sound_alert.tscn" id="7_ioj2c"]
+[ext_resource type="AudioStream" uid="uid://ckttea6foue5p" path="res://assets/sfx/debug_quack.mp3" id="8_vr7no"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h8tsu"]
 
@@ -158,18 +160,20 @@ material_override = SubResource("StandardMaterial3D_34s44")
 mesh = SubResource("BoxMesh_xri03")
 
 [node name="Player" parent="." instance=ExtResource("2_fy8q3")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -8)
 
 [node name="Avian" parent="." instance=ExtResource("3_k3awn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 8)
+collision_layer = 1
 _wander_points_path = NodePath("../WanderPoints")
-
-[node name="Trigger" parent="." instance=ExtResource("5_grq63")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -10)
 
 [node name="Button" parent="." instance=ExtResource("5_24q6q")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -10)
-_target_path = NodePath("../Trigger")
+_target_path = NodePath("PlayAudioTrigger")
+
+[node name="PlayAudioTrigger" parent="Button" instance=ExtResource("5_8c48e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+_audio_path = NodePath("../../AvianMechSoundAlert")
 
 [node name="WanderPoints" parent="." instance=ExtResource("6_1jtem")]
 
@@ -177,3 +181,9 @@ _target_path = NodePath("../Trigger")
 
 [node name="Marker3D2" type="Marker3D" parent="WanderPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 7)
+
+[node name="AvianMechSoundAlert" parent="." instance=ExtResource("7_ioj2c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.96603, 1.92968, 18.2343)
+stream = ExtResource("8_vr7no")
+unit_size = 4.0
+_radius = 16.0
