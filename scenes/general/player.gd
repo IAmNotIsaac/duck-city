@@ -329,7 +329,7 @@ func _sl_JUMP() -> void:
 func _sl_CLIMB() -> void:
 	var target_position : Vector3 = _n_climb_check.get_collision_point() + Vector3(0.0, 1.0, 0.0)
 	var dist : float = _n_climb_check.global_position.y - _n_climb_check.get_collision_point().y
-	var dir := Vector3(global_position.x, 0.0, global_position.z).direction_to(Vector3(target_position.x, 0.0, target_position.z))
+#	var dir := Vector3(global_position.x, 0.0, global_position.z).direction_to(Vector3(target_position.x, 0.0, target_position.z))
 	
 #	var target_dir := Vector2(target_position.x, target_position.z).direction_to(Vector2(global_position.x, global_position.z)).normalized()
 #	var vel_dir := -Vector2(velocity.x, velocity.z).normalized()\
@@ -352,7 +352,8 @@ func _sl_CLIMB() -> void:
 	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT + 0.25, 0.5 / _CLIMB_SPEED).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT, 0.5 / _CLIMB_SPEED).set_trans(Tween.TRANS_QUAD)
 	
-	tween_forward.tween_property(_n_cam, "position:z", -_CLIMB_DISTANCE, 1.0 / _CLIMB_SPEED).set_delay(climb_time)
+	tween_forward.tween_property(_n_cam, "global_position:x", target_position.x, 1.0 / _CLIMB_SPEED)
+	tween_forward.tween_property(_n_cam, "global_position:z", target_position.z, 1.0 / _CLIMB_SPEED)
 	
 	tween_tilt.tween_property(_n_cam, "rotation_degrees:z", PI, 0.25 / _CLIMB_SPEED).set_delay(climb_time * 0.8)
 	
