@@ -27,6 +27,7 @@ var _progress := 0.0
 ## Private methods ##
 
 func _flip_direction() -> void:
+	@warning_ignore("int_as_enum_without_cast")
 	_direction = wrapi(_direction + 1, 0, Direction.MAX)
 
 
