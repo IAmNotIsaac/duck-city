@@ -345,15 +345,15 @@ func _sl_CLIMB() -> void:
 #	var gim_rot := atan2(-dir.z, dir.x) - 0.5 * PI
 	
 	var tween_bob := get_tree().create_tween().bind_node(self)
-	var tween_forward := get_tree().create_tween().bind_node(self)
+	var tween_forward := get_tree().create_tween().bind_node(self).set_parallel(true)
 	var tween_tilt := get_tree().create_tween().bind_node(self)
 	
 	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT - 0.5, climb_time).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT)
 	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT + 0.25, 0.5 / _CLIMB_SPEED).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT, 0.5 / _CLIMB_SPEED).set_trans(Tween.TRANS_QUAD)
 	
-	tween_forward.tween_property(_n_cam, "global_position:x", target_position.x, 1.0 / _CLIMB_SPEED)
-	tween_forward.tween_property(_n_cam, "global_position:z", target_position.z, 1.0 / _CLIMB_SPEED)
+	tween_forward.tween_property(_n_cam, "global_position:x", target_position.x, 1.0 / _CLIMB_SPEED).set_delay(climb_time)
+	tween_forward.tween_property(_n_cam, "global_position:z", target_position.z, 1.0 / _CLIMB_SPEED).set_delay(climb_time)
 	
 	tween_tilt.tween_property(_n_cam, "rotation_degrees:z", PI, 0.25 / _CLIMB_SPEED).set_delay(climb_time * 0.8)
 	
