@@ -24,11 +24,11 @@ const _ACCELERATION := 0.5
 const _DEACCELERATION := 0.25
 
 @export var _target_type := Constants.AvianType.AVIAN
-@export_node_path("WanderPoints") var _wander_points_path : NodePath
+@export_node_path("PointArray") var _wander_points_path : NodePath
 @export var _generic_move_speed := 0.0
 @export var _urgent_move_speed := 0.0
 @export var _chase_move_speed := 0.0
-@export var _attack_reach := 2.0
+@export var _attack_reach := 3.5
 @export var _attack_amount := 50.0
 
 var _mstate := StateMachine.new(self, MoveStates, MoveStates.GROUND, "M")
@@ -55,7 +55,7 @@ func _ready() -> void:
 	_wander_points = []
 	if not _wander_points_path.is_empty():
 		var wpn := get_node(_wander_points_path)
-		if wpn is WanderPoints:
+		if wpn is PointArray:
 			_wander_points = wpn.get_wander_points()
 
 

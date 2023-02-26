@@ -1,5 +1,5 @@
 @tool
-class_name WanderPoints
+class_name PointArray
 extends Node
 
 

@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://d02jjwameoskw"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scenes/tools/wander_points.gd" id="1_kx8aw"]
+[ext_resource type="Script" path="res://scenes/tools/point_array.gd" id="1_kx8aw"]
 
-[node name="WanderPoints" type="Node"]
+[node name="PointArray" type="Node"]
 script = ExtResource("1_kx8aw")
 
 [connection signal="child_entered_tree" from="." to="." method="_on_child_entered_tree"]
