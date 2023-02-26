@@ -24,12 +24,12 @@ func _alert_avian_mechs() -> void:
 			body.alert(get_global_position())
 
 
-## Public methods #3
+func _process(delta : float) -> void:
+	if playing:
+		_alert_avian_mechs()
 
-func play(from_position := 0.0) -> void:
-	super(from_position)
-	_alert_avian_mechs()
 
+## Public methods ##
 
 func set_radius(value : float) -> void:
 	if not is_inside_tree():
