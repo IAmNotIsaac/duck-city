@@ -296,7 +296,7 @@ func _sp_AIR(delta : float) -> void:
 
 func _sp_WALLRUN(_delta : float) -> void:
 	var normal : Vector3 = _n_wallrun_tracker.get_collision_normal()
-	_n_wallrun_tracker.target_position = -Vector3(normal.x, 0.0, normal.z)
+	_n_wallrun_tracker.target_position = -Vector3(normal.x, 0.0, normal.z) * 0.5
 	var angle := atan2(normal.z, normal.x) + PI * 0.5 * (-1 if _wallrun_cast == _n_wallrunr_check else 1)
 	
 	if velocity != Vector3.ZERO and Time.get_ticks_msec() - _last_step_sound > 200:
