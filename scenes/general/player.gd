@@ -161,7 +161,7 @@ func _ground_movement(_delta : float) -> void:
 	
 	var move_forward := Vector3(sin(theta) * input.y, 0.0, cos(theta) * input.y)
 	var move_strafe := Vector3(cos(-theta) * input.x, 0.0, sin(-theta) * input.x)
-	var speed : float = _RUN_SPEED if Input.is_action_pressed("run") else _WALK_SPEED
+	var speed : float = _WALK_SPEED if Input.is_action_pressed("walk") else _RUN_SPEED
 	velocity = (move_forward + move_strafe).normalized() * speed * speed_factor * max(_FAST_SPEED, 1.0)
 	
 	if velocity != Vector3.ZERO and Time.get_ticks_msec() - _last_step_sound > 500:
@@ -203,7 +203,7 @@ func _sp_GROUND(delta : float) -> void:
 	_ground_movement(delta)
 	_permit_interact()
 	
-	if Input.is_action_pressed("run"):
+	if Input.is_action_pressed("walk"):
 		if await _can_quick_climb() and is_equal_approx(velocity.length(), _RUN_SPEED * _FAST_SPEED):
 			_state.switch(States.QUICK_CLIMB)
 			return
