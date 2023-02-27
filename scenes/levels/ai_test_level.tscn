@@ -215,9 +215,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -10)
 
 [node name="DynamicCamera" parent="." instance=ExtResource("10_2ui5e")]
-current = true
-fov = 90.0
 _target_path = NodePath("../PlayerCameraTarget")
+_current = true
 
 [node name="PlayerCameraTarget" parent="." instance=ExtResource("11_3sqjh")]
 weight = 0.5

@@ -2,5 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/tools/dynamic_camera.gd" id="1_olssp"]
 
-[node name="DynamicCamera" type="Camera3D"]
+[node name="DynamicCamera" type="Node3D"]
 script = ExtResource("1_olssp")
+
+[node name="Camera3D" type="Camera3D" parent="."]
