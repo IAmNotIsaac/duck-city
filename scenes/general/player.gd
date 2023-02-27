@@ -51,11 +51,9 @@ var speed_factor := 1.0
 @onready var _n_cam_target : CameraTarget = get_node_or_null(_camera_target_path)
 @onready var _n_gimbal := $Gimbal
 @onready var _n_cam := $Gimbal/CameraStandIn
-#@onready var _n_hacky_floor_check := $HackyFloorCheck
 @onready var _n_wallrunl_check := $Gimbal/WallrunLeftCheck
 @onready var _n_wallrunr_check := $Gimbal/WallrunRightCheck
 @onready var _n_wallrun_tracker := $WallrunTracker
-#@onready var _n_pause_menu := $Control/PauseMenu
 @onready var _n_interact_cast := $Gimbal/CameraStandIn/InteractCast
 @onready var _n_climb_check := $Gimbal/ClimbCheck
 @onready var _n_climb_space_check := $Gimbal/ClimbCheck/SpaceCheck
@@ -344,20 +342,9 @@ func _sl_JUMP() -> void:
 func _sl_CLIMB() -> void:
 	var target_position : Vector3 = _n_climb_check.get_collision_point() + Vector3(0.0, 1.0, 0.0)
 	var dist : float = _n_climb_check.global_position.y - _n_climb_check.get_collision_point().y
-#	var dir := Vector3(global_position.x, 0.0, global_position.z).direction_to(Vector3(target_position.x, 0.0, target_position.z))
-	
-#	var target_dir := Vector2(target_position.x, target_position.z).direction_to(Vector2(global_position.x, global_position.z)).normalized()
-#	var vel_dir := -Vector2(velocity.x, velocity.z).normalized()\
-#
-#	if not (vel_dir == Vector2.ZERO or vel_dir == target_dir):
-#		_state.switch(States.DEFAULT)
-#		return
-	
 	var climb_height : float = _n_climb_check.position.y + 1.0 - dist
 	var climb_time := climb_height / _CLIMB_SPEED
 	var cam_pos : Vector3 = _n_cam.position
-#	var cam_rot : Vector3 = _n_cam.rotation
-#	var gim_rot := atan2(-dir.z, dir.x) - 0.5 * PI
 	
 	var tween_bob := get_tree().create_tween().bind_node(self)
 	var tween_forward := get_tree().create_tween().bind_node(self).set_parallel(true)
@@ -377,8 +364,6 @@ func _sl_CLIMB() -> void:
 	var tween_adjust := get_tree().create_tween().bind_node(self).parallel()
 	
 	tween_adjust.tween_property(_n_cam, "global_position", target_position + Vector3(0.0, _CAM_HEIGHT, 0.0), 0.1)
-#	tween_adjust.tween_property(_n_cam, "rotation", cam_rot, 0.1)
-#	tween_adjust.tween_property(_n_gimbal, "rotation:y", gim_rot, 0.1)
 	
 	await tween_adjust.finished
 	
@@ -394,13 +379,6 @@ func _sl_QUICK_CLIMB() -> void:
 	var target_position : Vector3 = _n_climb_check.get_collision_point() + Vector3(0.0, 1.0, 0.0) + fdir * _QUICK_CLIMB_FDIST
 	var dist : float = _n_climb_check.global_position.y - _n_climb_check.get_collision_point().y
 	
-#	var target_dir := Vector2(target_position.x, target_position.z).direction_to(Vector2(global_position.x, global_position.z)).normalized()
-#	var vel_dir := -Vector2(velocity.x, velocity.z).normalized()\
-#
-#	if not (vel_dir == Vector2.ZERO or vel_dir == target_dir):
-#		_state.switch(States.DEFAULT)
-#		return
-	
 	var climb_height : float = _n_climb_check.position.y + 1.0 - dist
 	var climb_time := climb_height / _QUICK_CLIMB_SPEED
 	var cam_pos : Vector3 = _n_cam.position
@@ -408,14 +386,11 @@ func _sl_QUICK_CLIMB() -> void:
 	
 	var tween_bob := get_tree().create_tween().bind_node(self)
 	var tween_forward := get_tree().create_tween().bind_node(self)
-#	var tween_tilt := get_tree().create_tween().bind_node(self)
 	
 	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT - 0.5, climb_time).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT)
 	tween_bob.tween_property(_n_cam, "position:y", climb_height + _CAM_HEIGHT, 0.5 / _QUICK_CLIMB_SPEED).set_trans(Tween.TRANS_BOUNCE)
 	
 	tween_forward.tween_property(_n_cam, "position:z", -_QUICK_CLIMB_FDIST, 1.0 / _QUICK_CLIMB_SPEED).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)#.set_delay(climb_time)
-	
-#	tween_tilt.tween_property(_n_cam, "rotation_degrees:z", PI, 0.25 / _CLIMB_SPEED).set_delay(climb_time * 0.8)
 	
 	await tween_bob.finished
 	
