@@ -46,7 +46,7 @@ var _cam_h_offset := 0.0
 
 var speed_factor := 1.0
 
-@export_node_path("CameraTarget") var _camera_target_path
+@export_node_path("CameraTarget") var _camera_target_path : NodePath
 
 @onready var _n_cam_target : CameraTarget = get_node_or_null(_camera_target_path)
 @onready var _n_gimbal := $Gimbal
@@ -65,7 +65,8 @@ func _ready() -> void:
 	_n_cam.position.y = _CAM_HEIGHT
 	_n_climb_check.position.z = -_CLIMB_DISTANCE
 	_health = _MAX_HEALTH
-	_n_cam_target.set_cull_mask(_n_cam_target.get_cull_mask() & ~2)
+	if _n_cam_target != null:
+		_n_cam_target.set_cull_mask(_n_cam_target.get_cull_mask() & ~2)
 	_state.switch(States.DEFAULT)
 
 
