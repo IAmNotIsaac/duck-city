@@ -8,7 +8,7 @@ extends Camera3D
 
 ## Private methods ##
 
-func _process(delta : float) -> void:
+func _process(_delta : float) -> void:
 	if _target != null:
 		global_position = global_position.lerp(_target.global_position, _target.weight)
 		global_rotation = Vector3(
