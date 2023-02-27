@@ -41,17 +41,22 @@ var _health := _MAX_HEALTH
 var _last_damage_time := 0
 var _target_camera_tilt := 0.0
 var _last_step_sound := 0
+var _cam_v_offset := 0.0
+var _cam_h_offset := 0.0
 
 var speed_factor := 1.0
 
+@export_node_path("CameraTarget") var _camera_target_path
+
+@onready var _n_cam_target : CameraTarget = get_node_or_null(_camera_target_path)
 @onready var _n_gimbal := $Gimbal
-@onready var _n_cam := $Gimbal/Camera3D
+@onready var _n_cam := $Gimbal/CameraStandIn
 #@onready var _n_hacky_floor_check := $HackyFloorCheck
 @onready var _n_wallrunl_check := $Gimbal/WallrunLeftCheck
 @onready var _n_wallrunr_check := $Gimbal/WallrunRightCheck
 @onready var _n_wallrun_tracker := $WallrunTracker
 #@onready var _n_pause_menu := $Control/PauseMenu
-@onready var _n_interact_cast := $Gimbal/Camera3D/InteractCast
+@onready var _n_interact_cast := $Gimbal/CameraStandIn/InteractCast
 @onready var _n_climb_check := $Gimbal/ClimbCheck
 @onready var _n_climb_space_check := $Gimbal/ClimbCheck/SpaceCheck
 
@@ -62,6 +67,7 @@ func _ready() -> void:
 	_n_cam.position.y = _CAM_HEIGHT
 	_n_climb_check.position.z = -_CLIMB_DISTANCE
 	_health = _MAX_HEALTH
+	_n_cam_target.set_cull_mask(_n_cam_target.get_cull_mask() & ~2)
 	_state.switch(States.DEFAULT)
 
 
@@ -77,6 +83,7 @@ func _physics_process(delta : float) -> void:
 	_state.process(delta)
 	_controller_look()
 	_camera_tilt()
+	_update_camera_target()
 
 
 func _controller_look() -> void:
@@ -93,6 +100,14 @@ func _controller_look() -> void:
 
 func _camera_tilt() -> void:
 	_n_cam.rotation_degrees.z = lerp(_n_cam.rotation_degrees.z, _target_camera_tilt, 0.2)
+
+
+func _update_camera_target() -> void:
+	if _n_cam_target != null:
+		_n_cam_target.set_global_position(_n_cam.global_position)
+		_n_cam_target.set_global_rotation(_n_cam.global_rotation)
+		_n_cam_target.set_h_offset(_cam_h_offset)
+		_n_cam_target.set_v_offset(_cam_v_offset)
 
 
 func _step_sound() -> void:
@@ -140,7 +155,7 @@ func _ground_movement(_delta : float) -> void:
 		Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
 	)
 	
-	_n_cam.v_offset = lerp(_n_cam.v_offset, sin(Time.get_ticks_msec() * 0.01) * 0.1 * int(input.x or input.y), 0.2)
+	_cam_v_offset = lerp(_cam_v_offset, sin(Time.get_ticks_msec() * 0.01) * 0.1 * int(input.x or input.y), 0.2)
 	
 	var theta : float = _n_gimbal.global_transform.basis.get_euler().y
 	
@@ -208,7 +223,7 @@ func _sp_GROUND(delta : float) -> void:
 
 
 func _sp_LAND(delta : float) -> void:
-	_n_cam.v_offset = max(_n_cam.v_offset - 2.0 * delta, -0.2)
+	_cam_v_offset = max(_cam_v_offset - 2.0 * delta, -0.2)
 	_permit_interact()
 	
 	if _state.get_state_time() > 0.1:
@@ -318,7 +333,7 @@ func _sl_GROUND() -> void:
 
 
 func _su_GROUND() -> void:
-	get_tree().create_tween().tween_property(_n_cam, "v_offset", 0.0, 1)
+	get_tree().create_tween().tween_property(self, "_cam_v_offset", 0.0, 1)
 
 
 func _sl_JUMP() -> void:

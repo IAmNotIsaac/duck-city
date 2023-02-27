@@ -36,11 +36,9 @@ mesh = SubResource("CapsuleMesh_xpto2")
 
 [node name="Gimbal" type="Node3D" parent="."]
 
-[node name="Camera3D" type="Camera3D" parent="Gimbal"]
-cull_mask = 1048573
-current = true
+[node name="CameraStandIn" type="Node3D" parent="Gimbal"]
 
-[node name="InteractCast" type="RayCast3D" parent="Gimbal/Camera3D"]
+[node name="InteractCast" type="RayCast3D" parent="Gimbal/CameraStandIn"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 target_position = Vector3(0, -2, 0)
 collision_mask = 13

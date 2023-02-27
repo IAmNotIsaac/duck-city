@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://dcgnynr6jsmsm"]
+[gd_scene load_steps=26 format=3 uid="uid://dcgnynr6jsmsm"]
 
 [ext_resource type="Texture2D" uid="uid://ksbk55dx0kg" path="res://icon.svg" id="1_xyldx"]
 [ext_resource type="PackedScene" uid="uid://c35ug12xrl8p3" path="res://scenes/general/player.tscn" id="2_fy8q3"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://dfefyx6hkggug" path="res://scenes/tools/avian_mech_sound_alert.tscn" id="7_ioj2c"]
 [ext_resource type="AudioStream" uid="uid://ckttea6foue5p" path="res://assets/sfx/debug_quack.mp3" id="8_vr7no"]
 [ext_resource type="PackedScene" uid="uid://cw7felin4u8q6" path="res://scenes/triggers/movable_trigger.tscn" id="9_5itvo"]
+[ext_resource type="PackedScene" uid="uid://bkcm367dioe5h" path="res://scenes/tools/dynamic_camera.tscn" id="10_2ui5e"]
+[ext_resource type="PackedScene" uid="uid://bb3emm6ug6ufd" path="res://scenes/tools/camera_target.tscn" id="11_3sqjh"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h8tsu"]
 
@@ -164,6 +166,7 @@ mesh = SubResource("BoxMesh_xri03")
 
 [node name="Player" parent="." instance=ExtResource("2_fy8q3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -8)
+_camera_target_path = NodePath("../PlayerCameraTarget")
 
 [node name="Avian" parent="." instance=ExtResource("3_k3awn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 8)
@@ -210,3 +213,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
 
 [node name="P4" type="Marker3D" parent="PointArray2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -10)
+
+[node name="DynamicCamera" parent="." instance=ExtResource("10_2ui5e")]
+current = true
+fov = 90.0
+_target_path = NodePath("../PlayerCameraTarget")
+
+[node name="PlayerCameraTarget" parent="." instance=ExtResource("11_3sqjh")]
+weight = 0.5
