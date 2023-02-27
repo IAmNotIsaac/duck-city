@@ -10,6 +10,7 @@ enum States {
 	AIR,
 	LAND,
 	WALLRUN,
+	CRAWL,
 	DEAD,
 }
 
@@ -20,6 +21,7 @@ const _GRAVITY := 20.0
 const _JUMP_FORCE := 7.0
 const _WALK_SPEED := 4.0
 const _RUN_SPEED := 7.0
+const _CRAWL_SPEED := 2.0
 const _AIR_FRICTION := 0.1
 const _MAX_HEALTH := 100.0
 const _HEAL_RATE := 20.0 # health per second
@@ -29,13 +31,14 @@ const _WALLRUN_FALL_SPEED := -0.5
 const _FAST_SPEED := 1.5
 const _DAMAGE_COOLDOWN := 500
 const _CAM_HEIGHT := 0.5
+const _CRAWL_CAM_HEIGHT := -0.25
 const _CLIMB_DISTANCE := 0.7
 const _CLIMB_SPEED := 1.7
 const _QUICK_CLIMB_HEIGHT := 0.6
 const _QUICK_CLIMB_SPEED := 2.0
 const _QUICK_CLIMB_FDIST := 2.0
 
-var _state := StateMachine.new(self, States)
+var _state := StateMachine.new(self, States, States.DEFAULT)
 var _wallrun_cast : RayCast3D
 var _health := _MAX_HEALTH
 var _last_damage_time := 0
@@ -57,17 +60,19 @@ var speed_factor := 1.0
 @onready var _n_interact_cast := $Gimbal/CameraStandIn/InteractCast
 @onready var _n_climb_check := $Gimbal/ClimbCheck
 @onready var _n_climb_space_check := $Gimbal/ClimbCheck/SpaceCheck
+@onready var _n_stand_col := $BodyCollision
+@onready var _n_crawl_col := $CrawlCollision
+@onready var _n_stand_space_check := $StandSpaceCheck
 
 
 ## Private methods ##
 
 func _ready() -> void:
-	_n_cam.position.y = _CAM_HEIGHT
 	_n_climb_check.position.z = -_CLIMB_DISTANCE
 	_health = _MAX_HEALTH
 	if _n_cam_target != null:
 		_n_cam_target.set_cull_mask(_n_cam_target.get_cull_mask() & ~2)
-	_state.switch(States.DEFAULT)
+	_state.ready()
 
 
 func _input(event : InputEvent) -> void:
@@ -148,20 +153,19 @@ func _can_quick_climb() -> bool:
 	return true
 
 
-func _ground_movement(_delta : float) -> void:
+func _ground_movement(_delta : float, speed : float) -> void:
 	var input := Vector2(
 		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
 		Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
 	)
 	
-	_cam_v_offset = lerp(_cam_v_offset, sin(Time.get_ticks_msec() * 0.01) * 0.1 * int(input.x or input.y), 0.2)
-	
 	var theta : float = _n_gimbal.global_transform.basis.get_euler().y
 	
 	var move_forward := Vector3(sin(theta) * input.y, 0.0, cos(theta) * input.y)
 	var move_strafe := Vector3(cos(-theta) * input.x, 0.0, sin(-theta) * input.x)
-	var speed : float = _WALK_SPEED if Input.is_action_pressed("walk") else _RUN_SPEED
 	velocity = (move_forward + move_strafe).normalized() * speed * speed_factor * max(_FAST_SPEED, 1.0)
+	
+	_cam_v_offset = lerp(_cam_v_offset, sin(Time.get_ticks_msec() * 0.01) * 0.1 * int(input.x or input.y), 0.2)
 	
 	if velocity != Vector3.ZERO and Time.get_ticks_msec() - _last_step_sound > 500:
 		_last_step_sound = Time.get_ticks_msec()
@@ -196,11 +200,24 @@ func _permit_interact() -> void:
 			col.interact(not Input.is_action_just_pressed("interact"))
 
 
+func _crawl_collision() -> void:
+	_n_crawl_col.set_disabled(false)
+	_n_stand_col.set_disabled(true)
+
+
+func _stand_collision() -> void:
+	_n_crawl_col.set_disabled(true)
+	_n_stand_col.set_disabled(false)
+
+
 ## State processes ##
 
 func _sp_GROUND(delta : float) -> void:
-	_ground_movement(delta)
+	_ground_movement(delta, _WALK_SPEED if Input.is_action_pressed("walk") else _RUN_SPEED)
 	_permit_interact()
+	
+	if Input.is_action_just_pressed("crawl"):
+		_state.switch(States.CRAWL)
 	
 	if Input.is_action_pressed("walk"):
 		if await _can_quick_climb() and is_equal_approx(velocity.length(), _RUN_SPEED * _FAST_SPEED):
@@ -219,6 +236,17 @@ func _sp_GROUND(delta : float) -> void:
 	if not is_on_floor():
 		_state.switch(States.AIR)
 		return
+
+
+func _sp_CRAWL(delta : float) -> void:
+	_ground_movement(delta, _CRAWL_SPEED)
+	_permit_interact()
+	
+	if Input.is_action_just_pressed("crawl"):
+		_state.switch(States.GROUND)
+	
+	if not is_on_floor():
+		_state.switch(States.AIR)
 
 
 func _sp_LAND(delta : float) -> void:
@@ -306,12 +334,23 @@ func _sp_DEAD(_delta : float) -> void:
 ## State [un]loading ##
 
 func _sl_DEFAULT() -> void:
+	if _n_stand_space_check.has_overlapping_bodies():
+		_state.switch(States.CRAWL)
+		return
+	
+	_stand_collision()
+	_n_cam.position.y = _CAM_HEIGHT
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 	if is_on_floor():
 		_state.switch(States.GROUND)
 	else:
 		_state.switch(States.AIR)
+
+
+func _sl_CRAWL() -> void:
+	_crawl_collision()
+	_n_cam.position.y = _CRAWL_CAM_HEIGHT
 
 
 func _sl_WALLRUN() -> void:
@@ -324,11 +363,16 @@ func _su_WALLRUN() -> void:
 
 
 func _sl_LAND() -> void:
-	pass
+	_n_cam.position.y = _CAM_HEIGHT
 
 
 func _sl_GROUND() -> void:
-	pass
+	if _n_stand_space_check.has_overlapping_bodies():
+		_state.switch(States.CRAWL)
+		return
+	
+	_stand_collision()
+	_n_cam.position.y = _CAM_HEIGHT
 
 
 func _su_GROUND() -> void:
