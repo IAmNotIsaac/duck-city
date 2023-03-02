@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scenes/triggers/play_audio_logic.gd" id="1_6rhmj"]
+[ext_resource type="Script" path="res://scenes/logic/play_audio_logic.gd" id="1_6rhmj"]
 
 [node name="PlayAudioTrigger" type="Node3D"]
 script = ExtResource("1_6rhmj")
