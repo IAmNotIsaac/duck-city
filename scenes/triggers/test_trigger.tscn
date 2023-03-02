@@ -1,7 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://da7nu3xoiq6l6"]
-
-[ext_resource type="PackedScene" uid="uid://bhxb0esvgtynh" path="res://scenes/triggers/trigger.tscn" id="1_kd7ij"]
-[ext_resource type="Script" path="res://scenes/triggers/test_trigger.gd" id="2_i37sg"]
-
-[node name="TestTrigger" instance=ExtResource("1_kd7ij")]
-script = ExtResource("2_i37sg")

@@ -1,4 +1,4 @@
-extends Trigger
+extends Logic
 
 
 func _on_activated() -> void:

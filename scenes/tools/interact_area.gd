@@ -5,9 +5,9 @@ extends Area3D
 signal interacted
 
 @export var _continuous := false
-@export_node_path("Trigger") var _target_path
+@export_node_path("Logic") var _target_path
 
-@onready var _n_target : Trigger
+@onready var _n_target : Logic
 
 
 ## Private methods ##

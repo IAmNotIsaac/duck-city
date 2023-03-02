@@ -1,4 +1,4 @@
-extends Trigger
+extends Logic
 
 
 enum FollowMode {

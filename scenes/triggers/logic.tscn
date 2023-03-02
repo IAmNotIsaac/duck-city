@@ -1,4 +1,7 @@
-class_name Trigger
+[gd_scene load_steps=2 format=3 uid="uid://dsxln82ximsuo"]
+
+[sub_resource type="GDScript" id="GDScript_jhcc6"]
+script/source = "class_name Logic
 extends Node3D
 
 
@@ -16,3 +19,7 @@ func activate() -> void:
 
 func deactivate() -> void:
 	_on_deactivated()
+"
+
+[node name="Trigger" type="Node3D"]
+script = SubResource("GDScript_jhcc6")

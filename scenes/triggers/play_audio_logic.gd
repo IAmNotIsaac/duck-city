@@ -1,4 +1,4 @@
-extends Trigger
+extends Logic
 
 
 @export_node_path("AudioStreamPlayer3D", "AudioStreamPlayer2D", "AudioStreamPlayer") var _audio_path

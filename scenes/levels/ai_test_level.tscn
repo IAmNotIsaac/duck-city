@@ -1,14 +1,14 @@
-[gd_scene load_steps=26 format=3 uid="uid://dcgnynr6jsmsm"]
+[gd_scene load_steps=26 format=3 uid="uid://lpg2j681yreg"]
 
 [ext_resource type="Texture2D" uid="uid://ksbk55dx0kg" path="res://icon.svg" id="1_xyldx"]
 [ext_resource type="PackedScene" uid="uid://c35ug12xrl8p3" path="res://scenes/general/player.tscn" id="2_fy8q3"]
 [ext_resource type="PackedScene" uid="uid://bcygeqsv86edb" path="res://scenes/mechs/duck_mech.tscn" id="3_k3awn"]
-[ext_resource type="PackedScene" uid="uid://do74lmtxbmqyh" path="res://scenes/triggers/play_audio_trigger.tscn" id="5_8c48e"]
+[ext_resource type="PackedScene" path="res://scenes/triggers/play_audio_logic.tscn" id="5_8c48e"]
 [ext_resource type="PackedScene" uid="uid://cavorm3ap5bx3" path="res://scenes/tools/button.tscn" id="5_24q6q"]
 [ext_resource type="PackedScene" path="res://scenes/tools/point_array.tscn" id="6_1jtem"]
 [ext_resource type="PackedScene" uid="uid://dfefyx6hkggug" path="res://scenes/tools/avian_mech_sound_alert.tscn" id="7_ioj2c"]
 [ext_resource type="AudioStream" uid="uid://ckttea6foue5p" path="res://assets/sfx/debug_quack.mp3" id="8_vr7no"]
-[ext_resource type="PackedScene" uid="uid://cw7felin4u8q6" path="res://scenes/triggers/movable_trigger.tscn" id="9_5itvo"]
+[ext_resource type="PackedScene" path="res://scenes/triggers/movable_logic.tscn" id="9_5itvo"]
 [ext_resource type="PackedScene" uid="uid://bkcm367dioe5h" path="res://scenes/tools/dynamic_camera.tscn" id="10_2ui5e"]
 [ext_resource type="PackedScene" uid="uid://bb3emm6ug6ufd" path="res://scenes/tools/camera_target.tscn" id="11_3sqjh"]
 
